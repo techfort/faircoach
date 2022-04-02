@@ -1,18 +1,23 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png" />
-    <HelloWorld msg="Welcome to Your Vue.js + TypeScript App" />
+    <match-setup />
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import HelloWorld from "@/components/HelloWorld.vue"; // @ is an alias to /src
+import MatchSetup from '@/components/MatchSetup.vue';
 
 export default defineComponent({
   name: "HomeView",
+  setup() {
+    const msg = 'is it working?';
+    return {
+      msg,
+    };
+  },
   components: {
-    HelloWorld,
+    MatchSetup,
   },
 });
 </script>
