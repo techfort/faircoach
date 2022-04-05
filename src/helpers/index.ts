@@ -28,12 +28,13 @@ export type Game = {
   isOngoing: boolean,
   teamSize: number,
   periodLength: number,
-  matchStart: Date | null,
+  matchStart: Date,
   goals: Array<Goal>,
   opponentScore: number,
   isHomeGame: boolean,
   players: Map<string, Player>,
   minimumPlayTime: number,
+  breakLength: number,
 };
 
 export const newPlayer = (name: string, roles: Array<string>, playerNumber: number) : Player => ({
@@ -51,7 +52,7 @@ export const newInterval = () : Interval => ({
   end: null,
 });
 
-export const newGame = (teamSize: number, periodLength: number, isHomeGame: boolean) : Game => ({
+export const newGame = (teamSize: number, periodLength: number, isHomeGame: boolean, breakLength: number) : Game => ({
   isOngoing: false,
   teamSize,
   periodLength,
@@ -61,6 +62,7 @@ export const newGame = (teamSize: number, periodLength: number, isHomeGame: bool
   isHomeGame,
   players: new Map<string, Player>(),
   minimumPlayTime: 50,
+  breakLength,
 });
 
 export const newGoal = (player: Player) : Goal => ({
@@ -75,7 +77,7 @@ export const playPlayer = (player: Player) : Player => {
   return p;
 };
 
-export const stopPlayer = (game: Game, playerOut: Player) : Player => {
+export const stopPlayer = (playerOut: Player) : Player => {
   const p = clone(playerOut);
   const t = new Date();
   p.currentInterval.end = t;
@@ -89,10 +91,23 @@ export const startGame = (game: Game): Game => {
   g.isOngoing = true;
   const matchStart = new Date();
   g.matchStart = matchStart;
-  for(const entry of Object.entries(game.players)) {
+  for(const entry of Object.entries(g.players)) {
     const p = entry[1];
     if (p.isPlaying) {
       p.currentInterval = newInterval();
+    }
+  }
+  return g;
+};
+
+export const pauseGame = (game: Game) : Game => {
+  const g = game;
+  g.isOngoing = false;
+  for (const entry of Object.entries(g.players)) {
+    const p = entry[1];
+    if (p.isPlaying) {
+      const q = stopPlayer(p);
+      g.players.set(entry[0], q);
     }
   }
   return g;

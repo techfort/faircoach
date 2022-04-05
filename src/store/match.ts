@@ -4,7 +4,7 @@ import { newGame, Game, Player } from '@/helpers/index';
 export const useMatchStore =  defineStore('match', {
   state: () => {
     return { 
-      game: newGame(11, 45, true),
+      game: newGame(3, 3, true, 1),
     };
   },
   getters: {
