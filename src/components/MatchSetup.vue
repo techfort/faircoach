@@ -30,7 +30,7 @@
       </div>
       <div v-if="game.players.size >= game.teamSize"><button @click="startMatch()">start match</button></div>
       <div>
-        <div v-for="[id, player] in game.players" :key="player.id">
+        <div v-for="[id, player] in store.players" :key="player.id">
           <span :id="id">{{ player.roles }} {{ player.name }} {{ player.playerNumber }} </span>
         </div>
       </div> 
@@ -39,7 +39,7 @@
 
 <script>
 import { defineComponent } from 'vue';
-import { newPlayer, startGame } from '@/helpers';
+import { newPlayer } from '@/helpers';
 import { useMatchStore } from '@/store/match';
 import PlayerForm from '@/components/PlayerForm.vue';
 
@@ -66,9 +66,6 @@ export default defineComponent({
       this.store.addPlayer(p);
     },
     startMatch() {
-      const g = startGame(this.store.g);
-      this.store.setGame(g);
-      console.log('starting match...');
       this.$router.push({ path: '/match'})
     },
   },
