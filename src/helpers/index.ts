@@ -172,6 +172,7 @@ export const stopGame = (game: Game) : Game => {
 export const updateGame = (game: Game) : Game => {
   for (const [id, player] of game.players.entries()) {
     const p = updatePlayerInterval(player);
+    p.totalPlayerTime = playerTime(p);
     game.players.set(id, p);
   }
   return game;

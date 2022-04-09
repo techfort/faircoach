@@ -1,6 +1,6 @@
 <template>
     <div>
-        [{{ player.number }}] {{ player.name }} {{ displayTime(player) }}
+        [{{ player.playerNumber }}] {{ player.name }} {{ displayTime(player) }}
     </div>
 </template>
 
