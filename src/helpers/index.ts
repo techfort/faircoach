@@ -135,38 +135,36 @@ export const pausePlayer = (playerOut: Player) : Player => {
 };
 
 export const startGame = (game: Game): Game => { 
-  const g = game;
-  g.isOngoing = true;
+  game.isOngoing = true;
   const matchStart = new Date();
-  g.matchStart = matchStart;
-  for(const entry of g.players.entries()) {
+  game.matchStart = matchStart;
+  for(const entry of game.players.entries()) {
     const p = entry[1];
     if (p.isPlaying) {
       p.currentInterval.start = matchStart.getTime();
       p.currentInterval.end = matchStart.getTime();
     }
   }
-  return g;
+  return game;
 };
 
 export const pauseGame = (game: Game) : Game => {
-  const g = game;
-  g.isOngoing = false;
-  for (const [id, p] of g.players.entries()) {
+  game.isOngoing = false;
+  for (const [id, p] of game.players.entries()) {
     if (p.isPlaying) {
-      g.players.set(id, pausePlayer(p));
+      game.players.set(id, pausePlayer(p));
     }
   }
   const t = new Date();
-  g.breaks.unshift({ start: t.getTime(), end: t.getTime() });
-  return g;
+  game.breaks.unshift({ start: t.getTime(), end: t.getTime() });
+  return game;
 };
 
 export const stopGame = (game: Game) : Game => {
-  const g = pauseGame(game);
-  g.matchEnd = new Date();
-  g.finished = true;
-  return g;
+  pauseGame(game);
+  game.matchEnd = new Date();
+  game.finished = true;
+  return game;
 };
 
 export const updateGame = (game: Game) : Game => {

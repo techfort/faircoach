@@ -17,7 +17,7 @@
 
     </div>
     <div>
-      <div v-for="[id, p] in players" :key="id">
+      <div v-for="[id, p] in store.g.players" :key="id">
         <player-view :player="p" />
         <!-- {{ p.name }} - {{ playerTime(p).minutes }}:{{ playerTime(p).seconds }} -->
       </div>
@@ -33,7 +33,7 @@
 
 <script> 
 import "vue3-circle-progress/dist/circle-progress.css";
-import { defineComponent, onMounted, ref, reactive } from 'vue';
+import { defineComponent, onMounted, ref } from 'vue';
 import { useMatchStore } from '@/store/match';
 import { playerTime, pauseGame, resumeGame, startGame, updateGame, stopGame, totalBreaksLength } from '@/helpers';
 import CircleProgress from 'vue3-circle-progress';
@@ -59,19 +59,18 @@ export default defineComponent({
     const start = () => {
       state.value = states.PLAYING;
       clearInterval(timer);
-      const game = startGame(store.g);
-      store.setGame(game);
+      startGame(store.g);
       console.log('starting....');
       timer = setInterval(update, 1000);
     };
     const pause = () => {
       state.value = states.PAUSED;
       clearInterval(timer);
-      store.setGame(pauseGame(store.g));
+      pauseGame(store.g);
     };
     const resume = () => {
       state.value = states.PLAYING;
-      store.setGame(resumeGame(store.g));
+      resumeGame(store.g);
       timer = setInterval(update, 1000);
     };
     const reset = () => {
@@ -80,7 +79,7 @@ export default defineComponent({
     };
     const update = () => {
       percentageOfMatch.value = calculatePercentageOfMatchElapsed(elapsed());
-      store.setGame(updateGame(store.g));
+      updateGame(store.g);
     };
     const elapsed = () => {
       const tbl = totalBreaksLength(store.g);
@@ -111,7 +110,7 @@ export default defineComponent({
       calculatePercentageOfMatchElapsed,
       stop,
       playerTime: (p) => playerTime(p),
-      players: ref(store.g.players),
+      players: ref(() => store.g.players),
     };
   },
   components: {
