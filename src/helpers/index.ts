@@ -116,10 +116,7 @@ export const playPlayer = (player: Player) : Player => {
   return p;
 };
 
-export const playerTime = (player: Player) : Duration => {
-
-  return calcDuration(0, [...player.intervals, player.currentInterval].reduce((prev, cur) => (prev + (cur.end - cur.start)), 0));
-}
+export const playerTime = (player: Player) : Duration => calcDuration(0, [...player.intervals, player.currentInterval].reduce((prev, cur) => (prev + (cur.end - cur.start)), 0));
 
 export const stopPlayer = (player: Player) : Player => {
   const p = pausePlayer(player);
