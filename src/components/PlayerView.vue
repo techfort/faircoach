@@ -6,17 +6,17 @@
 
 <script>
 import { defineComponent } from 'vue';
-import { playerTime } from '@/helpers';
+import { playerTime, formatDuration } from '@/helpers';
 
 export default defineComponent({
   props: ['player'],       
-  // setup() {
-  // },
-  methods: {
-    displayTime(player) {
-      const { minutes, seconds } = playerTime(player);
-      return `${minutes}:${seconds}`;
-    }
+  setup() {
+    return {
+      displayTime(player) {
+        const { minutes, seconds } = formatDuration(playerTime(player));
+        return `${minutes}:${seconds}`;
+      },
+    };
   },
-})
+});
 </script>

@@ -116,6 +116,20 @@ export const playPlayer = (player: Player) : Player => {
   return p;
 };
 
+export type FormattedDuration = {
+  minutes: string,
+  seconds: string,
+};
+
+const zeroPad = (n: number) : string => n < 10 ? `0${n}` : `${n}`;
+
+export const formatDuration = (d: Duration): FormattedDuration => {
+  return {
+    minutes: zeroPad(d.minutes),
+    seconds: zeroPad(d.seconds),
+  };
+};
+
 export const playerTime = (player: Player) : Duration => calcDuration(0, [...player.intervals, player.currentInterval].reduce((prev, cur) => (prev + (cur.end - cur.start)), 0));
 
 export const stopPlayer = (player: Player) : Player => {

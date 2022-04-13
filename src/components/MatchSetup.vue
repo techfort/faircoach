@@ -1,32 +1,43 @@
 <template>
     <div>
       <div>
-        <h2>MS</h2>
-        <label for="teamSize">Size
-          <input type="number" name="teamSize" v-model="game.teamSize" />
-        </label>
-        <label for="matchlength">
-          <input type="number" name="matchlength" v-model="game.periodLength" />
-        </label>
-        <label for="minimumPlayTime">Min PlayTime %
-          <input type="number" range="0,100" name="minimumPlayTime" v-model="game.minimumPlayTime" />
-        </label>
+        <div>
+          <label for="teamSize">Team Size<br />
+            <input type="number" name="teamSize" v-model="game.teamSize" />
+          </label>
+        </div>
+        <div>
+          <label for="matchlength">Game Period in Minutes<br />
+            <input type="number" name="matchlength" v-model="game.periodLength" />
+          </label>
+        </div>
+        <div>
+          <label for="minimumPlayTime">Min PlayTime %<br />
+            <input type="number" range="0,100" name="minimumPlayTime" v-model="game.minimumPlayTime" />
+          </label>
+        </div>
         <p>{{ game.teamSize }}-aside {{ game.periodLength }}-min halves</p>
         <p>min number of minutes {{ minimumNumberOfMinutes }}</p>
         <p>Max number of players {{ maxNumberOfPlayers }}</p>
       </div>
       <div>
         <h2>Ps</h2>
-        <label for="name">Name
-          <input type="text" name="name" v-model="newplayer.name" />
-        </label>
-        <label for="number">Number
-          <input type="text" name="number" v-model="newplayer.number" />
-        </label>
-        <label for="role">Role
-          <input type="text" name="role" v-model="newplayer.role" />
-        </label>
-        <p><button @click="addPlayer()">add player</button></p>
+        <div>
+          <label for="name">Name
+            <input type="text" name="name" v-model="newplayer.name" />
+          </label>
+        </div>
+        <div>
+          <label for="number">Number
+            <input type="text" name="number" v-model="newplayer.number" />
+          </label>
+        </div>
+        <div>
+          <label for="role">Role
+            <input type="text" name="role" v-model="newplayer.role" />
+          </label>
+        </div>
+        <p><button @click="addPlayer()" class="border-0">add player</button></p>
       </div>
       <div v-if="game.players.size >= game.teamSize"><button @click="startMatch()">start match</button></div>
       <div>
