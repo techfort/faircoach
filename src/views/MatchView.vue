@@ -1,6 +1,6 @@
 <template>
-  <div id="matchProgress" class="text-center w-screen p-16 text-sky-300 font-bold">
-    <circle-progress :percent="percentageOfMatch" :show-percent="true" class="justify-center" />
+  <div id="matchProgress" class="w-screen p-16 text-sky-300 font-bold">
+    <circle-progress :percent="percentageOfMatch" :show-percent="true" class="text-center" />
     {{ state }}
     <button v-if="state == 'NOT_STARTED'" @click="start()">start</button>
     <button v-if="state == 'PLAYING'" @click="pause()">pause</button>
@@ -18,7 +18,7 @@
     </div>
     <div>
       <div v-for="[id, p] in store.g.players" :key="id">
-        <player-view :player="p" />
+        <player-view :player="p" :game="store.g" />
         <!-- {{ p.name }} - {{ playerTime(p).minutes }}:{{ playerTime(p).seconds }} -->
       </div>
     </div>
