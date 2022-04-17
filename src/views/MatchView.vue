@@ -1,6 +1,16 @@
 <template>
-  <div id="matchProgress" class="w-screen p-16 text-sky-300 font-bold">
-    <circle-progress :percent="percentageOfMatch" :show-percent="true" class="text-center" />
+  <div id="matchProgress" class="w-screen p-16 m-4 font-bold">
+    <div class="flex bg-lime-800 m-4 items-center justify-content">
+      <circle-progress :percent="percentageOfMatch" :show-percent="true" class="text-center" />
+      <div>
+        <h2>{{ homeTeam }} - {{ awayTeam }}</h2>
+        <h2>{{ homeGoals }} - {{ awayGoals }}</h2>
+        <div class="grid grid-cols-2 gap-4">
+          <div>Add Goal for Hone</div>
+          <div>Add Goal for Away</div>
+        </div>
+      </div>
+    </div>
     {{ state }}
     <button v-if="state == 'NOT_STARTED'" @click="start()">start</button>
     <button v-if="state == 'PLAYING'" @click="pause()">pause</button>
@@ -9,7 +19,7 @@
     <div>
       <button @click="reset()">reset</button>
     </div>
-    <div>
+    <div v-if="debug">
       Breaks
       <div v-for="b in store.g.breaks" :key="b.start">
         {{ b.start }} => {{ b.end }}
@@ -19,7 +29,6 @@
     <div>
       <div v-for="[id, p] in store.g.players" :key="id">
         <player-view :player="p" :game="store.g" />
-        <!-- {{ p.name }} - {{ playerTime(p).minutes }}:{{ playerTime(p).seconds }} -->
       </div>
     </div>
   </div>
@@ -33,7 +42,7 @@
 
 <script> 
 import "vue3-circle-progress/dist/circle-progress.css";
-import { defineComponent, onMounted, ref } from 'vue';
+import { defineComponent, onMounted, ref, computed } from 'vue';
 import { useMatchStore } from '@/store/match';
 import { playerTime, pauseGame, resumeGame, startGame, updateGame, stopGame, totalBreaksLength } from '@/helpers';
 import CircleProgress from 'vue3-circle-progress';
@@ -97,6 +106,7 @@ export default defineComponent({
     };
     onMounted(() => { console.log(store.g); }); 
     return {
+      debug: false,
       store,
       percentageOfMatch,
       timer,
@@ -111,6 +121,16 @@ export default defineComponent({
       stop,
       playerTime: (p) => playerTime(p),
       players: ref(() => store.g.players),
+      homeTeam: computed(() => store.g.isHomeGame ? store.g.myTeamName : store.g.opponentTeamName ),
+      awayTeam: computed(() => store.g.isHomeGame ? store.g.opponentTeamName : store.g.myTeamName ),
+      homeGoals: computed(() => {
+        const teamName = store.g.isHomeGame ? store.g.myTeamName : store.g.opponentTeamName;
+        return store.g.goals.filter((goal) => goal.team == teamName).length;
+      }),
+      awayGoals: computed(() => {
+        const teamName = store.g.isHomeGame ? store.g.opponentTeamName : store.g.myTeamName;
+        return store.g.goals.filter((goal) => goal.team == teamName).length;
+      }),
     };
   },
   components: {

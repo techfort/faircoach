@@ -1,8 +1,7 @@
 <template>
   <div class="p-0 m-0">
     <nav class="p-9 flex">
-      <router-link to="/">Match-SETUP</router-link> |
-      <router-link to="/about">About</router-link>
+      <router-link to="/">New Match</router-link> 
     </nav>
     <router-view />
   </div>

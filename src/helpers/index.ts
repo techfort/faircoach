@@ -21,8 +21,15 @@ export type Player = {
 };
 
 export type Goal = {
-  scorer: Player,
-  at: Date,
+  id: string,
+  scorer: number,
+  team: string,
+  at: number,
+};
+
+export type Shot = {
+  at: number,
+  team: ''
 };
 
 export type Duration = {
@@ -33,13 +40,14 @@ export type Duration = {
 export type Game = {
   id: string,
   isOngoing: boolean,
+  myTeamName: string,
+  opponentTeamName: string,
   teamSize: number,
   numberOfPeriods: number,
   periodLength: number,
   matchStart: Date,
   matchEnd: Date,
   goals: Array<Goal>,
-  opponentScore: number,
   isHomeGame: boolean,
   players: Map<string, Player>,
   minimumPlayTime: number,
@@ -92,11 +100,12 @@ export const newGame = (teamSize: number, periodLength: number, isHomeGame: bool
   isOngoing: false,
   teamSize,
   periodLength,
+  myTeamName: '',
+  opponentTeamName: '',
   matchStart: new Date(),
   matchEnd: new Date(),
   goals: new Array<Goal>(),
   breaks: new Array<Interval>(),
-  opponentScore: 0,
   isHomeGame,
   players: new Map<string, Player>(),
   minimumPlayTime: 50,
@@ -104,9 +113,11 @@ export const newGame = (teamSize: number, periodLength: number, isHomeGame: bool
   finished: false,
 });
 
-export const newGoal = (player: Player) : Goal => ({
-  at: new Date(),
+export const newGoal = (at: number, player: number, team: string) : Goal => ({
+  id: uuidv4(),
+  at,
   scorer: player,
+  team, 
 });
 
 export const playPlayer = (player: Player) : Player => {
@@ -202,10 +213,10 @@ export const resumeGame = (game: Game) : Game => {
 
 export const totalBreaksLength = (game: Game) : number => Math.trunc(game.breaks.reduce((prev, cur) => prev + (cur.end - cur.start), 0) / 1000);
 
-export const homeGoal = (player: Player, game: Game) : Game => {
+export const scoreGoal = (at: number, player: number, team: string, game: Game) : Game => {
   const g = game;
-  g.goals.push(newGoal(player));
+  g.goals.push(newGoal(at, player, team));
   return g;
 };
 
-export const getScore = (game: Game) : string => `${game.goals.length} - ${game.opponentScore}`;
+// export const getScore = (game: Game) : string => `${game.goals.length} - ${game.opponentGoals.length}`;

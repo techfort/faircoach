@@ -1,8 +1,23 @@
 <template>
-    <div>
+    <div class="flex">
       <div class="flex items-center justify-between">
-        <form class="bg-lime-800 rounded px-4 mb-4 border-0 border-lime-300">
+        <form class="bg-lime-800 rounded px-4 mb-4 border-0 border-lime-300" @submit.prevent>
           <h2>Match Setup</h2>
+          <div>
+            <label for="myTeamName">My Team</label>
+            <input type="text" name="myTeamName"
+              class="shadow appearance-none border rounded py-2 w-full focus:outline-none leading-tight"
+              v-model="game.myTeamName" />
+            Home Game: <input type="checkbox" name="isHomeGame" v-model="game.isHomeGame" />
+          </div>
+
+          <div>
+            <label for="opponentTeamName">Opponent Team Name</label>
+            <input type="text" name="opponentTeamName"
+              class="shadow appearance-none border rounded py-2 w-full focus:outline-none leading-tight"
+              v-model="game.opponentTeamName" />
+          </div>
+
           <div>
             <label for="teamSize">Team Size</label>
             <input type="number" name="teamSize"
@@ -22,13 +37,17 @@
               class="shadow appearance-none border rounded py-2 w-full focus:outline-none leading-tight"
               name="minimumPlayTime" v-model="game.minimumPlayTime" />
           </div>
-          <p>{{ game.teamSize }}-aside {{ game.periodLength }}-min halves</p>
-          <p>min number of minutes {{ minimumNumberOfMinutes }}</p>
-          <p>Max number of players {{ maxNumberOfPlayers }}</p>
+          <div>
+          <h3>Summary</h3>
+            <p>{{ game.myTeamName }} vs. {{ game.opponentTeamName }}</p>
+            <p>{{ game.teamSize }}-aside {{ game.periodLength }}-min halves</p>
+            <p>min number of minutes {{ minimumNumberOfMinutes }}</p>
+            <p>Max number of players {{ maxNumberOfPlayers }}</p>
+          </div>
         </form> 
       </div>
       <div class="flex items-center justify-between">
-        <form class="bg-lime-800 shadow-md rounded px-4 pt-6 pb-8 mb-4 border-0" v-on:submit.prevent>
+        <form class="bg-lime-800 shadow-md rounded px-4 pt-6 pb-8 mb-4 border-0" @submit.prevent>
           <div class="flex flex-row clear-both"><h2>Add Player</h2></div>
           <div>
             <label for="name">Name</label>
@@ -56,11 +75,16 @@
           <p><button @click="addPlayer()" class="border-0">add player</button></p>
         </form>
       </div>
-      <div class="flex flex-row items-center justify-between clear-both">
-        <div v-if="game.players.size >= game.teamSize"><button @click="startMatch($event)">start match</button></div>
+      <div class="flex flex-row items-center justify-between clear-both m-1">
         <div>
+          <div v-if="game.players.size >= game.teamSize">
+            <button @click="startMatch($event)"
+              class="border-0 border-lime-800 rounded-md bg-yellow-600 shadow-md px-3 text-shao text-lg text-white">GO TO MATCH</button>
+          </div>
+          <h2>Line Up</h2>
           <div v-for="[id, player] in store.players" :key="player.id">
-            <span :id="id">{{ player.roles }} {{ player.name }} {{ player.playerNumber + ' ' + player.isPlaying }}
+            <span :id="id">{{ player.roles[0] }}
+              <span class="font-bold text-yellow-400 text-lg">{{ player.name }}</span> {{ player.playerNumber }}
               playing: <input type="checkbox" v-bind="player" class="border-0 border-lime-200 bg-slate-300" v-model="player.isPlaying" /></span>
           </div>
         </div>
