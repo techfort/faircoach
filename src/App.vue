@@ -26,4 +26,28 @@ html {
   );
   background-size: 100% 100px;
 }
+
+input {
+  @apply shadow appearance-none border rounded py-2 focus:outline-none leading-tight text-lg;
+
+  .form-check-input {
+    &:checked {
+      @apply bg-green-400;
+    }
+  }
+}
+
+button {
+  @apply shadow appearance-none border rounded py-2 w-full focus:outline-none leading-tight uppercase border-0 border-lime-800 rounded-md bg-yellow-600 shadow-md px-3 text-lg text-white;
+}
+
+.form-check {
+  input {
+    @apply form-check-input appearance-none w-9 -ml-10 rounded-full h-5 align-top bg-white bg-no-repeat bg-contain bg-gray-400 focus:outline-none cursor-pointer shadow-sm;
+  }
+  label {
+    @apply form-check-label inline-block m-1;
+  }
+}
+
 </style>
