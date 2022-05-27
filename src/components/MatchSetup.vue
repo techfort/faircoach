@@ -15,11 +15,7 @@
             </div>
           </div>
           <div class="flex my-3">
-            <div class="form-check form-switch">
-              <input class="form-check-input appearance-none w-9 -ml-10 rounded-full h-5 align-top bg-white bg-no-repeat bg-contain bg-gray-400 focus:outline-none cursor-pointer shadow-sm" 
-              type="checkbox" role="switch" id="flexSwitchCheckDefault" v-model="game.isHomeGame">
-              <label class="form-check-label inline-block m-1" for="flexSwitchCheckDefault">Home&nbsp;game</label>
-            </div>
+            <toggle-switch label="Home Game" :switchValue="game.isHomeGame" @update:switchValue="updateHomeGame" />
           </div>
 
           <div class="flex flex-col md:items-end md:flex-row">
@@ -116,7 +112,7 @@ import { useRouter } from 'vue-router';
 import { newPlayer } from '@/helpers';
 import { useMatchStore } from '@/store/match';
 import { useHistoryStore } from '@/store/history';
-import PlayerForm from '@/components/PlayerForm.vue';
+import ToggleSwitch from '@/components/fragments/ToggleSwitch.vue';
 
 export default defineComponent({
   name: 'MatchSetup',
@@ -130,6 +126,10 @@ export default defineComponent({
       role: '',
       showValidation: false,
     });
+
+    const updateHomeGame = (x) => {
+      store.setGame({ ...store.g, isHomeGame: x })
+    }
     const prefillPlayer = (p) => {
       console.log(p.playerNumber)
       newplayer.name = p.name
@@ -160,19 +160,23 @@ export default defineComponent({
       return (store.g.periodLength * 2 * store.g.teamSize) / minimumNumberOfMinutes.value;
     });
     return {
+      // stores
       store,
       history,
-      newplayer,
-      prefillPlayer,
+      // vars
       game: computed(() => store.g),
       minimumNumberOfMinutes,
       maxNumberOfPlayers,
+      newplayer,
+      // functions
+      updateHomeGame,
+      prefillPlayer,
       addPlayer,
       startMatch,
     };
   },
-  copmonents: {
-    PlayerForm,
+  components: {
+    ToggleSwitch,
   },
 })
 </script>
