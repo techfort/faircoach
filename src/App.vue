@@ -37,8 +37,16 @@ input {
   }
 }
 
-button {
+button:not(.icon) {
   @apply shadow appearance-none border rounded py-2 w-full focus:outline-none leading-tight uppercase border-0 border-lime-800 rounded-md bg-yellow-600 shadow-md px-3 text-lg text-white;
+}
+
+button.icon {
+  @apply bg-transparent border-0 text-6xl;
+  &.rotate {
+    transform: rotate(90deg);
+    writing-mode:vertical-rl;
+  }
 }
 
 .form-check {

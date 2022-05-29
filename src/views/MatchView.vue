@@ -1,30 +1,38 @@
 <template>
-  <div id="matchProgress" class="w-screen p-16 m-4 font-bold">
-    <div class="flex bg-lime-800 m-4 items-center justify-content">
-      <circle-progress :percent="percentageOfMatch" :show-percent="true" class="text-center" />
-      <div>
-        <h2>{{ homeTeam }} - {{ awayTeam }}</h2>
-        <h2>{{ homeGoals }} - {{ awayGoals }}</h2>
-        <div class="grid grid-cols-2 gap-4">
-          <div>Add Goal for Hone</div>
-          <div>Add Goal for Away</div>
-        </div>
+  <div id="matchProgress" class="p-16 m-4 font-bold">
+    <div class="flex flex-col items-start">
+      {{ state }}
+      <div v-if="state == 'NOT_STARTED'">Click below to start the match timer</div>
+      <div class="flex flex-row">
+        <button class="icon rotate" v-if="state == 'NOT_STARTED'" @click="start()">🔼</button>
+        <button class="icon" v-if="state == 'PLAYING'" @click="pause()">⏸</button>
+        <button class="rotate-90" v-if="state == 'PAUSED'" @click="resume()">🔼</button>
+        <button class="icon" v-if="state == 'PLAYING'" @click="stop()">⏹</button>
+        <button class="icon" @click="reset()">🔄</button>         
       </div>
     </div>
-    {{ state }}
-    <button v-if="state == 'NOT_STARTED'" @click="start()">start</button>
-    <button v-if="state == 'PLAYING'" @click="pause()">pause</button>
-    <button v-if="state == 'PAUSED'" @click="resume()">resume</button>
-    <button v-if="state == 'PLAYING'" @click="stop()">stop</button>
-    <div>
-      <button @click="reset()">reset</button>
+    <div class="flex bg-lime-800 m-2 p-2 items-center justify-content">
+      <circle-progress :percent="percentageOfMatch" :show-percent="true" class="text-center p-4" />
+      <div class="text-center p-4">
+        <div v-if="state == 'PLAYING'">playing: {{ timeElapsed }}</div>
+        <h2>{{ homeTeam }} - {{ awayTeam }}</h2>
+        <h2>{{ homeGoals }} - {{ awayGoals }}</h2>
+        <template v-if="state == 'PLAYING'">
+          <div class="grid grid-cols-2 gap-4" v-if="!goalScoreMode">
+            <button @click="() => goalScored()">Score Goal</button>
+          </div>
+          <div class="grid grid-cols-2 gap-4" v-if="goalScoreMode">
+            <button @click="() => goalScored(homeTeam)">{{ homeTeam }} Scored!</button>
+            <button @click="() => goalScored(awayTeam)">{{ awayTeam }} Scored!</button>
+          </div>
+        </template>
+      </div>
     </div>
     <div v-if="debug">
       Breaks
       <div v-for="b in store.g.breaks" :key="b.start">
         {{ b.start }} => {{ b.end }}
       </div>
-
     </div>
     <div>
       <div v-for="[id, p] in store.g.players" :key="id">
@@ -42,9 +50,9 @@
 
 <script> 
 import "vue3-circle-progress/dist/circle-progress.css";
-import { defineComponent, onMounted, ref, computed } from 'vue';
+import { defineComponent, onMounted, ref, computed, reactive } from 'vue';
 import { useMatchStore } from '@/store/match';
-import { playerTime, pauseGame, resumeGame, startGame, updateGame, stopGame, totalBreaksLength } from '@/helpers';
+import { playerTime, pauseGame, resumeGame, startGame, updateGame, stopGame, totalBreaksLength, scoreGoal } from '@/helpers';
 import CircleProgress from 'vue3-circle-progress';
 import PlayerView from '@/components/PlayerView.vue';
 
@@ -62,9 +70,11 @@ export default defineComponent({
   setup() {
     const store = useMatchStore();
     let percentageOfMatch = ref(0);
+    let timeElapsed = ref('');
     console.log('GAME -> \n', store.g);
     let state = ref(states.NOT_STARTED);
     let timer;
+    let goalScoreMode = reactive(false);
     const start = () => {
       state.value = states.PLAYING;
       clearInterval(timer);
@@ -88,27 +98,49 @@ export default defineComponent({
     };
     const update = () => {
       percentageOfMatch.value = calculatePercentageOfMatchElapsed(elapsed());
+      timeElapsed.value = toHHMMSS(elapsed());
       updateGame(store.g);
     };
     const elapsed = () => {
       const tbl = totalBreaksLength(store.g);
       return Math.round(((new Date()).getTime() - store.g.matchStart.getTime()) / 1000) - tbl;
     };
+    const toHHMMSS = (numSecs) => {
+      let secNum = parseInt(numSecs, 10);
+      let hours = Math.floor(secNum / 3600).toString().padStart(2, '0');
+      let minutes = Math.floor((secNum - (hours * 3600)) / 60).toString().padStart(2, '0');
+      let seconds = (secNum - (hours * 3600) - (minutes * 60)).toString().padStart(2, '0');
+      return `${hours}:${minutes}:${seconds}`;
+    }
     const calculatePercentageOfMatchElapsed = (elapsed) => {
       return store.g.isOngoing ?
         Math.round((elapsed / (store.g.periodLength * 60 * 2)) * 100) :
         percentageOfMatch;
+    };
+    const calculateTimeOfMatchElapsed = (elapsed) => {
+      return store.g.isOngoing ?
+        elapsed:
+        timeElapsed;
     };
     const stop = () => {
       state.value = states.STOPPED;
       stopGame(store.g);
       clearInterval(timer);
     };
+    const goalScored = (team) => {
+      if (!team) {
+        goalScoreMode = true;
+        return;
+      }
+      scoreGoal(1, 1, team, store.g);
+      goalScoreMode = false;
+    }
     onMounted(() => { console.log(store.g); }); 
     return {
       debug: false,
       store,
       percentageOfMatch,
+      timeElapsed,
       timer,
       state,
       start,
@@ -118,7 +150,10 @@ export default defineComponent({
       update,
       elapsed,
       calculatePercentageOfMatchElapsed,
+      calculateTimeOfMatchElapsed,
       stop,
+      goalScored,
+      goalScoreMode,
       playerTime: (p) => playerTime(p),
       players: ref(() => store.g.players),
       homeTeam: computed(() => store.g.isHomeGame ? store.g.myTeamName : store.g.opponentTeamName ),
