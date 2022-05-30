@@ -42,7 +42,12 @@ button:not(.icon) {
 }
 
 button.icon {
-  @apply bg-transparent border-0 text-6xl;
+  @apply text-white bg-transparent border-0 flex flex-col items-center;
+  svg {
+    @apply text-6xl;
+  }
+  span {
+  }
   &.rotate {
     transform: rotate(90deg);
     writing-mode:vertical-rl;

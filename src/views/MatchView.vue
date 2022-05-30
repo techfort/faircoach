@@ -3,12 +3,32 @@
     <div class="flex flex-col items-start">
       {{ state }}
       <div v-if="state == 'NOT_STARTED'">Click below to start the match timer</div>
+      <div v-if="state == 'PLAYING'">Game running</div>
+      <div v-if="state == 'PAUSED'">Game paused - hit resume to restart</div>
+      <div v-if="state == 'STOPPED'">Game stopped</div>
       <div class="flex flex-row">
-        <button class="icon rotate" v-if="state == 'NOT_STARTED'" @click="start()">🔼</button>
-        <button class="icon" v-if="state == 'PLAYING'" @click="pause()">⏸</button>
-        <button class="rotate-90" v-if="state == 'PAUSED'" @click="resume()">🔼</button>
-        <button class="icon" v-if="state == 'PLAYING'" @click="stop()">⏹</button>
-        <button class="icon" @click="reset()">🔄</button>         
+        <button class="icon" v-if="state == 'NOT_STARTED' || state == 'NOT_STARTED'" @click="start()">
+          <font-awesome-icon :icon="['fas', 'play']" />
+          <label>play</label>
+        </button>
+        <template v-if="state == 'PLAYING'">
+          <button class="icon" @click="pause()">
+            <font-awesome-icon :icon="['fas', 'pause']" />
+            <label>pause</label>
+          </button>
+          <button class="icon" @click="stop()">
+            <font-awesome-icon :icon="['fas', 'stop']" />
+            <label>stop</label>
+          </button>
+          <button class="icon" @click="reset()">
+            <font-awesome-icon :icon="['fas', 'xmark']" />
+            <label>cancel</label>
+          </button>         
+        </template>
+        <button class="icon" v-if="state == 'PAUSED'" @click="resume()">
+          <font-awesome-icon :icon="['fas', 'play']" />
+          <label>resume</label>
+        </button>
       </div>
     </div>
     <div class="flex bg-lime-800 m-2 p-2 items-center justify-content">
