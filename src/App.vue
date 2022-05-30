@@ -1,6 +1,6 @@
 <template>
   <div class="p-0 m-0">
-    <nav class="p-9 flex">
+    <nav class="pt-8 px-8 flex">
       <router-link to="/">New Match</router-link> 
     </nav>
     <router-view />

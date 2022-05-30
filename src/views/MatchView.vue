@@ -1,5 +1,5 @@
 <template>
-  <div id="matchProgress" class="p-16 m-4 font-bold">
+  <div id="matchProgress" class="p-4 m-4 font-bold">
     <div class="flex flex-col items-start">
       {{ state }}
       <div v-if="state == 'NOT_STARTED'">Click below to start the match timer</div>
@@ -112,6 +112,11 @@ export default defineComponent({
       resumeGame(store.g);
       timer = setInterval(update, 1000);
     };
+    const stop = () => {
+      state.value = states.STOPPED;
+      stopGame(store.g);
+      clearInterval(timer);
+    };
     const reset = () => {
       state.value = states.NOT_STARTED;
       store.$reset();
@@ -141,11 +146,6 @@ export default defineComponent({
       return store.g.isOngoing ?
         elapsed:
         timeElapsed;
-    };
-    const stop = () => {
-      state.value = states.STOPPED;
-      stopGame(store.g);
-      clearInterval(timer);
     };
     const goalScored = (team) => {
       if (!team) {

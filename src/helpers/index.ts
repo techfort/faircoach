@@ -187,6 +187,11 @@ export const pauseGame = (game: Game) : Game => {
 
 export const stopGame = (game: Game) : Game => {
   pauseGame(game);
+  for (const [id, p] of game.players.entries()) {
+    if (p.isPlaying) {
+      game.players.set(id, stopPlayer(p));
+    }
+  }
   game.matchEnd = new Date();
   game.finished = true;
   return game;
