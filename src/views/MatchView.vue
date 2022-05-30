@@ -7,7 +7,7 @@
       <div v-if="state == 'PAUSED'">Game paused - hit resume to restart</div>
       <div v-if="state == 'STOPPED'">Game stopped</div>
       <div class="flex flex-row">
-        <button class="icon" v-if="state == 'NOT_STARTED' || state == 'NOT_STARTED'" @click="start()">
+        <button class="icon" v-if="state == 'NOT_STARTED' || state == 'STOPPED'" @click="start()">
           <font-awesome-icon :icon="['fas', 'play']" />
           <label>play</label>
         </button>
@@ -31,20 +31,18 @@
         </button>
       </div>
     </div>
-    <div class="flex bg-lime-800 m-2 p-2 items-center justify-content">
+    <div class="flex flex-col md:flex-row bg-lime-800 m-2 p-2 items-center justify-content">
       <circle-progress :percent="percentageOfMatch" :show-percent="true" class="text-center p-4" />
-      <div class="text-center p-4">
+      <div class="flex flex-col text-center p-4">
         <div v-if="state == 'PLAYING'">playing: {{ timeElapsed }}</div>
-        <h2>{{ homeTeam }} - {{ awayTeam }}</h2>
-        <h2>{{ homeGoals }} - {{ awayGoals }}</h2>
+        <h2 class="p-0 m-0">{{ homeTeam || 'home' }} - {{ awayTeam || 'away' }}</h2>
+        <h1 class="p-0 m-0">{{ homeGoals }} - {{ awayGoals }}</h1>
         <template v-if="state == 'PLAYING'">
-          <div class="grid grid-cols-2 gap-4" v-if="!goalScoreMode">
-            <button @click="() => goalScored()">Score Goal</button>
-          </div>
-          <div class="grid grid-cols-2 gap-4" v-if="goalScoreMode">
-            <button @click="() => goalScored(homeTeam)">{{ homeTeam }} Scored!</button>
-            <button @click="() => goalScored(awayTeam)">{{ awayTeam }} Scored!</button>
-          </div>
+          <button v-if="!goalScoreMode" @click="showGoalButtons">Score Goal</button>
+          <template v-if="goalScoreMode">
+            <button class="my-2" @click="() => goalScored(homeTeam || 'home')">{{ homeTeam || 'Home team' }} Scored!</button>
+            <button class="my-2" @click="() => goalScored(awayTeam || 'away')">{{ awayTeam || 'Away team' }} Scored!</button>
+          </template>
         </template>
       </div>
     </div>
@@ -94,7 +92,7 @@ export default defineComponent({
     console.log('GAME -> \n', store.g);
     let state = ref(states.NOT_STARTED);
     let timer;
-    let goalScoreMode = reactive(false);
+    let goalScoreMode = ref(false);
     const start = () => {
       state.value = states.PLAYING;
       clearInterval(timer);
@@ -147,13 +145,13 @@ export default defineComponent({
         elapsed:
         timeElapsed;
     };
+    const showGoalButtons = () => {
+      goalScoreMode.value = true;
+    }
     const goalScored = (team) => {
-      if (!team) {
-        goalScoreMode = true;
-        return;
-      }
+      console.log(1, 1, team, store.g)
       scoreGoal(1, 1, team, store.g);
-      goalScoreMode = false;
+      goalScoreMode.value = false;
     }
     onMounted(() => { console.log(store.g); }); 
     return {
@@ -173,12 +171,14 @@ export default defineComponent({
       calculateTimeOfMatchElapsed,
       stop,
       goalScored,
+      showGoalButtons,
       goalScoreMode,
       playerTime: (p) => playerTime(p),
       players: ref(() => store.g.players),
       homeTeam: computed(() => store.g.isHomeGame ? store.g.myTeamName : store.g.opponentTeamName ),
       awayTeam: computed(() => store.g.isHomeGame ? store.g.opponentTeamName : store.g.myTeamName ),
       homeGoals: computed(() => {
+        console.log('hg', store.g)
         const teamName = store.g.isHomeGame ? store.g.myTeamName : store.g.opponentTeamName;
         return store.g.goals.filter((goal) => goal.team == teamName).length;
       }),

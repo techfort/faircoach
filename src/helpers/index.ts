@@ -221,6 +221,7 @@ export const totalBreaksLength = (game: Game) : number => Math.trunc(game.breaks
 export const scoreGoal = (at: number, player: number, team: string, game: Game) : Game => {
   const g = game;
   g.goals.push(newGoal(at, player, team));
+  console.log(g.goals)
   return g;
 };
 

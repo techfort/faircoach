@@ -39,6 +39,11 @@ input {
 
 button:not(.icon) {
   @apply shadow appearance-none border rounded py-2 w-full focus:outline-none leading-tight uppercase border-0 border-lime-800 rounded-md bg-yellow-600 shadow-md px-3 text-lg text-white;
+
+  &:active {
+    @apply border-2;
+  }
+
 }
 
 button.icon {
@@ -47,10 +52,6 @@ button.icon {
     @apply text-6xl;
   }
   span {
-  }
-  &.rotate {
-    transform: rotate(90deg);
-    writing-mode:vertical-rl;
   }
 }
 
